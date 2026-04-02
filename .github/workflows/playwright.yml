@@ -1,27 +1,29 @@
-name: Playwright Tests
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-jobs:
-  test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm install -g pnpm && pnpm install
-    - name: Install Playwright Browsers
-      run: pnpm exec playwright install --with-deps
-    - name: Run Playwright tests
-      run: pnpm exec playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+# disable workflow for now, we will run the tests locally until we have a stable test suite and reporting in place.
+# CI will be turned on later not on every run as this will exhause the free minutes on GitHub Actions and we want to save those for when we have a stable test suite and reporting in place.
+# name: Playwright Tests
+# on:
+#   push:
+#     branches: [ main, master ]
+#   pull_request:
+#     branches: [ main, master ]
+# jobs:
+#   test:
+#     timeout-minutes: 60
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v4
+#     - uses: actions/setup-node@v4
+#       with:
+#         node-version: lts/*
+#     - name: Install dependencies
+#       run: npm install -g pnpm && pnpm install
+#     - name: Install Playwright Browsers
+#       run: pnpm exec playwright install --with-deps
+#     - name: Run Playwright tests
+#       run: pnpm exec playwright test
+#     - uses: actions/upload-artifact@v4
+#       if: ${{ !cancelled() }}
+#       with:
+#         name: playwright-report
+#         path: playwright-report/
+#         retention-days: 30
