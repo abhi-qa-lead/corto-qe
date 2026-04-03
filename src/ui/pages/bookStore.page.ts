@@ -55,4 +55,8 @@ export class BookStorePage extends BasePage {
     const count = await this.getVisibleBookCount();
     return count === 0;
   }
+
+  async clickBook(title: string): Promise<void> {
+    await this.bookTable.getByRole('link', { name: title, exact: true }).click();
+  }
 }
