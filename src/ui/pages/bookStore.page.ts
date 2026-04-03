@@ -57,6 +57,6 @@ export class BookStorePage extends BasePage {
   }
 
   async clickBook(title: string) {
-    await this.bookTable.locator('tbody td a', { hasText: title }).click();
+    await this.bookTable.getByRole('link', { name: title, exact: true }).click();
   }
 }
