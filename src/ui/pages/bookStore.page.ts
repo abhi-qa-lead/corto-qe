@@ -56,7 +56,7 @@ export class BookStorePage extends BasePage {
     return count === 0;
   }
 
-  async clickBook(title: string) {
+  async clickBook(title: string): Promise<void> {
     await this.bookTable.getByRole('link', { name: title, exact: true }).click();
   }
 }
