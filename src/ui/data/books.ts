@@ -9,6 +9,10 @@ export interface Book {
   website: string;
 }
 
+// I will get this data by either of the following ways:
+// 1. Hitting the /books API endpoint in Postman and extracting the response payload
+// 2. Capturing the response payload of the /books network call in the browser dev tools
+// 3. Quering the database directly if possible and constructing the book objects manually as per the schema
 export const BOOKS: Book[] = [
   {
     isbn: '9781449325862',
@@ -73,7 +77,7 @@ export const BOOKS: Book[] = [
     publisher: "O'Reilly Media",
     pages: 254,
     description:
-      'Take advantage of JavaScript\'s power to build robust web-scale or enterprise applications that are easy to extend and maintain. By applying the design patterns outlined in this practical book, experienced JavaScript developers will learn how to write flex',
+      "Take advantage of JavaScript's power to build robust web-scale or enterprise applications that are easy to extend and maintain. By applying the design patterns outlined in this practical book, experienced JavaScript developers will learn how to write flex",
     website: 'http://chimera.labs.oreilly.com/books/1234000000262/index.html',
   },
   {
@@ -102,11 +106,7 @@ export const BOOKS: Book[] = [
 
 export const TOTAL_BOOKS = BOOKS.length;
 
-export function getSampleBooks(count: number): Book[] {
-  const seed = Number(process.env.TEST_SEED ?? '0');
-  const startIndex = seed % BOOKS.length;
-  return Array.from(
-    { length: Math.min(count, BOOKS.length) },
-    (_, i) => BOOKS[(startIndex + i) % BOOKS.length],
-  );
+export function getRandomBooks(count: number): Book[] {
+  const shuffled = [...BOOKS].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, BOOKS.length));
 }

@@ -20,6 +20,10 @@ export class BookDetailsPage extends BasePage {
     return await row.locator('#userName-value').innerText();
   }
 
+  get heading() {
+    return this.page.getByRole('heading', { name: 'Book Store' });
+  }
+
   async getISBN(): Promise<string> {
     return this.getField('ISBN');
   }

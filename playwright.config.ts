@@ -1,7 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
 
-process.env.TEST_SEED ??= Date.now().toString()
-
 export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
