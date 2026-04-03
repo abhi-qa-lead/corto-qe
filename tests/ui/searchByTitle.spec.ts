@@ -1,7 +1,7 @@
 import { test, expect } from '@fixtures';
 import { BOOKS, TOTAL_BOOKS } from '@ui/data/books';
 
-test.describe('COR-1: Search filters books by title keyword', () => {
+test.describe('COR-1: Search filters books by book title', () => {
   test('should display all books when search box is empty', async ({ bookStorePage }) => {
     const count = await bookStorePage.getVisibleBookCount();
     expect(count, `Expected all ${TOTAL_BOOKS} books to be visible`).toBe(TOTAL_BOOKS);
