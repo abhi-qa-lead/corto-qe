@@ -55,4 +55,8 @@ export class BookStorePage extends BasePage {
     const count = await this.getVisibleBookCount();
     return count === 0;
   }
+
+  async clickBook(title: string) {
+    await this.bookTable.locator('tbody td a', { hasText: title }).click();
+  }
 }
