@@ -16,7 +16,9 @@ export class BookDetailsPage extends BasePage {
   }
 
   async getField(label: string): Promise<string> {
+    label = label.toLowerCase();
     const row = this.page.locator(`#${label}-wrapper`);
+    // Selector #userName-value is shared across all field types
     return await row.locator('#userName-value').innerText();
   }
 
@@ -53,8 +55,7 @@ export class BookDetailsPage extends BasePage {
   }
 
   async getWebsiteLink(): Promise<string> {
-    const value = await this.getField('website');
-    return value;
+    return this.getField('website');
   }
 
   async goBackToStore() {
