@@ -20,6 +20,9 @@ importers:
       '@types/node':
         specifier: ^25.5.0
         version: 25.5.0
+      prettier:
+        specifier: ^3.8.1
+        version: 3.8.1
 
 packages:
 
@@ -257,6 +260,11 @@ packages:
   playwright@1.60.0-alpha-1774999321000:
     resolution: {integrity: sha512-Bd5DkzYKG+2g1jLO6NeTXmGLbBYSFffJIOsR4l4hUBkJvzvGGdLZ7jZb2tOtb0WIoWXQKdQj3Ap6WthV4DBS8w==}
     engines: {node: '>=18'}
+    hasBin: true
+
+  prettier@3.8.1:
+    resolution: {integrity: sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg==}
+    engines: {node: '>=14'}
     hasBin: true
 
   pretty-ms@9.3.0:
@@ -550,6 +558,8 @@ snapshots:
       playwright-core: 1.60.0-alpha-1774999321000
     optionalDependencies:
       fsevents: 2.3.2
+
+  prettier@3.8.1: {}
 
   pretty-ms@9.3.0:
     dependencies:
