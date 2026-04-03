@@ -16,13 +16,11 @@ export class BookDetailsPage extends BasePage {
   }
 
   async getField(label: string): Promise<string> {
-    label = label.toLowerCase();
     const row = this.page.locator(`#${label}-wrapper`);
-    // This #userName-value selector is shared across all field types
     return await row.locator('#userName-value').innerText();
   }
 
-  get heading() {
+  get pageHeading() {
     return this.page.getByRole('heading', { name: 'Book Store' });
   }
 

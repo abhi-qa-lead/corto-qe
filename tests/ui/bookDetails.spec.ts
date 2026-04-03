@@ -12,8 +12,10 @@ test.describe('COR-2: Click book title navigates to book details page', () => {
     await bookDetailsPage.waitForDetails();
 
     await expect(page).toHaveURL(new RegExp(`books\\?search=${book.isbn}`));
+    await expect(page).toHaveURL(/books\?search=/);
+    expect(page.url()).toContain(book.isbn);
 
-    await expect(bookDetailsPage.heading, 'Page heading should be visible').toBeVisible();
+    await expect(bookDetailsPage.pageHeading, 'Page heading should be visible').toBeVisible();
     expect(await bookDetailsPage.getISBN(), `ISBN should match - ${book.isbn}`).toBe(book.isbn);
     expect(await bookDetailsPage.getTitle(), `Title should match - ${book.title}`).toBe(book.title);
     expect(await bookDetailsPage.getSubTitle(), `Sub Title should match - ${book.subTitle}`).toBe(
