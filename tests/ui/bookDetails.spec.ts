@@ -46,6 +46,8 @@ test.describe('COR-2: Click book title navigates to book details page', () => {
     await bookDetailsPage.waitForDetails();
 
     await bookDetailsPage.goBackToStore();
-    expect(new URL(page.url()).pathname).toBe('/books');
+    const baseURL = test.info().project.use.baseURL;
+    const expectedURL = baseURL ? `${baseURL}/books` : '/books';
+    await expect(page).toHaveURL(expectedURL);
   });
 });

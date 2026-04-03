@@ -18,7 +18,7 @@ export class BookDetailsPage extends BasePage {
   async getField(label: string): Promise<string> {
     label = label.toLowerCase();
     const row = this.page.locator(`#${label}-wrapper`);
-    // Selector #userName-value is shared across all field types
+    // This #userName-value selector is shared across all field types
     return await row.locator('#userName-value').innerText();
   }
 
