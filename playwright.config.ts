@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import type { GitHubActionOptions } from '@estruyf/github-actions-reporter';
 
 export default defineConfig({
   fullyParallel: true,
@@ -6,7 +7,18 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI
-    ? [['list'], ['html'], ['@estruyf/github-actions-reporter']]
+    ? [
+        ['list'],
+        ['html'],
+        [
+          '@estruyf/github-actions-reporter',
+          <GitHubActionOptions>{
+            title: 'Corto QE UI Test Results',
+            useDetails: true,
+            showError: true,
+          },
+        ],
+      ]
     : [['list'], ['html']],
   use: {
     trace: 'on-first-retry',
