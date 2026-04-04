@@ -13,7 +13,10 @@
       "Bash(code-review-graph --version)",
       "Bash(code-review-graph build:*)",
       "WebFetch(domain:playwright.dev)",
-      "WebFetch(domain:devactivity.com)"
+      "WebFetch(domain:devactivity.com)",
+      "Bash(curl:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npx prettier:*)"
     ]
   }
 }
