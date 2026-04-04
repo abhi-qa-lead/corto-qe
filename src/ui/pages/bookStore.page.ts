@@ -1,23 +1,14 @@
 import { type Locator, type Page } from '@playwright/test';
 import { BasePage } from './base.page';
-import { title } from 'process';
 
 export class BookStorePage extends BasePage {
   private readonly searchBox: Locator;
   private readonly bookTable: Locator;
-  private readonly bookRows: Locator;
-  private readonly paginationLabel: Locator;
-  private readonly previousButton: Locator;
-  private readonly nextButton: Locator;
 
   constructor(page: Page) {
     super(page);
     this.searchBox = page.getByRole('textbox', { name: 'Type to search' });
     this.bookTable = page.getByRole('table');
-    this.bookRows = page.locator('table tbody tr');
-    this.paginationLabel = page.locator('.-pageInfo');
-    this.previousButton = page.getByRole('button', { name: 'Previous' });
-    this.nextButton = page.getByRole('button', { name: 'Next' });
   }
 
   async open() {
