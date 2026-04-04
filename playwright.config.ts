@@ -1,11 +1,13 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  reporter: process.env.CI
+    ? [['list'], ['html'], ['@estruyf/github-actions-reporter']]
+    : [['list'], ['html']],
   use: {
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
@@ -27,4 +29,4 @@ export default defineConfig({
       },
     },
   ],
-})
+});
