@@ -4,19 +4,11 @@ import { BasePage } from './base.page';
 export class BookStorePage extends BasePage {
   private readonly searchBox: Locator;
   private readonly bookTable: Locator;
-  private readonly bookRows: Locator;
-  private readonly paginationLabel: Locator;
-  private readonly previousButton: Locator;
-  private readonly nextButton: Locator;
 
   constructor(page: Page) {
     super(page);
     this.searchBox = page.getByRole('textbox', { name: 'Type to search' });
     this.bookTable = page.getByRole('table');
-    this.bookRows = page.locator('table tbody tr');
-    this.paginationLabel = page.locator('.-pageInfo');
-    this.previousButton = page.getByRole('button', { name: 'Previous' });
-    this.nextButton = page.getByRole('button', { name: 'Next' });
   }
 
   async open() {
@@ -54,6 +46,32 @@ export class BookStorePage extends BasePage {
   async hasNoResults(): Promise<boolean> {
     const count = await this.getVisibleBookCount();
     return count === 0;
+  }
+
+  async getColumnHeaders(): Promise<string[]> {
+    const headers = this.bookTable.locator('thead th');
+    return (await headers.allTextContents()).map((h) => h.trim());
+  }
+
+  async getBookRowData(row: Locator) {
+    const cells = row.locator('td');
+    const getCellText = async (index: number) =>
+      ((await cells.nth(index).textContent()) ?? '').trim();
+    return {
+      title: await getCellText(1),
+      author: await getCellText(2),
+      publisher: await getCellText(3),
+    };
+  }
+
+  async getAllBookRowData() {
+    const rows = this.bookTable.locator('tbody tr');
+    const count = await rows.count();
+    const data = [];
+    for (let i = 0; i < count; i++) {
+      data.push(await this.getBookRowData(rows.nth(i)));
+    }
+    return data;
   }
 
   async clickBook(title: string): Promise<void> {
