@@ -56,6 +56,30 @@ export class BookStorePage extends BasePage {
     return count === 0;
   }
 
+  async getColumnHeaders(): Promise<string[]> {
+    const headers = this.bookTable.locator('thead th');
+    return await headers.allTextContents();
+  }
+
+  async getBookRowData(row: Locator) {
+    const cells = row.locator('td');
+    return {
+      title: (await cells.nth(1).textContent()) ?? '',
+      author: (await cells.nth(2).textContent()) ?? '',
+      publisher: (await cells.nth(3).textContent()) ?? '',
+    };
+  }
+
+  async getAllBookRowData() {
+    const rows = this.bookTable.locator('tbody tr');
+    const count = await rows.count();
+    const data = [];
+    for (let i = 0; i < count; i++) {
+      data.push(await this.getBookRowData(rows.nth(i)));
+    }
+    return data;
+  }
+
   async clickBook(title: string): Promise<void> {
     await this.bookTable.getByRole('link', { name: title, exact: true }).click();
   }

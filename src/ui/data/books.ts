@@ -110,3 +110,5 @@ export function getRandomBooks(count: number): Book[] {
   const shuffled = [...BOOKS].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, Math.min(count, BOOKS.length));
 }
+
+export const BOOKS_COLUMN_HEADERS = ['Image', 'Title', 'Author', 'Publisher'];
