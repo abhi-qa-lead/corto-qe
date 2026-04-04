@@ -1,5 +1,6 @@
 import { type Locator, type Page } from '@playwright/test';
 import { BasePage } from './base.page';
+import { title } from 'process';
 
 export class BookStorePage extends BasePage {
   private readonly searchBox: Locator;
@@ -58,15 +59,17 @@ export class BookStorePage extends BasePage {
 
   async getColumnHeaders(): Promise<string[]> {
     const headers = this.bookTable.locator('thead th');
-    return await headers.allTextContents();
+    return (await headers.allTextContents()).map((h) => h.trim());
   }
 
   async getBookRowData(row: Locator) {
     const cells = row.locator('td');
+    const getCellText = async (index: number) =>
+      ((await cells.nth(index).textContent()) ?? '').trim();
     return {
-      title: (await cells.nth(1).textContent()) ?? '',
-      author: (await cells.nth(2).textContent()) ?? '',
-      publisher: (await cells.nth(3).textContent()) ?? '',
+      title: await getCellText(1),
+      author: await getCellText(2),
+      publisher: await getCellText(3),
     };
   }
 

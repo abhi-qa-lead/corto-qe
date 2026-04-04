@@ -14,13 +14,16 @@ test.describe('COR-3: Each book row displays correct title, author, publisher et
       BOOKS.length,
     );
 
+    const expectedByTitle = new Map(BOOKS.map((book) => [book.title, book]));
+
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      const book = BOOKS[i];
-      expect(row.title, `Row ${i + 1} title should match - ${book.title}`).toBe(book.title);
-      expect(row.author, `Row ${i + 1} author should match - ${book.author}`).toBe(book.author);
-      expect(row.publisher, `Row ${i + 1} publisher should match - ${book.publisher}`).toBe(
-        book.publisher,
+      const expected = expectedByTitle.get(row.title);
+
+      expect(expected, `Row ${i + 1} has unexpected title - ${row.title}`).toBeDefined();
+      expect(row.author, `Row ${i + 1} author should match - ${row.title}`).toBe(expected!.author);
+      expect(row.publisher, `Row ${i + 1} publisher should match - ${row.title}`).toBe(
+        expected!.publisher,
       );
     }
   });
