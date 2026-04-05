@@ -9,7 +9,7 @@ class SpecReporter implements Reporter {
   }
 
   private printSuiteHeader(parts: string[], projectName: string | undefined) {
-    const suiteKey = parts.join(' › ');
+    const suiteKey = [projectName, ...parts].join(' › ');
     if (this.printedSuites.has(suiteKey)) return;
     this.printedSuites.add(suiteKey);
     console.log();
@@ -57,7 +57,9 @@ class SpecReporter implements Reporter {
     }
 
     const passed = [...finalResults.values()].filter((r) => r.status === 'passed').length;
-    const failed = [...finalResults.values()].filter((r) => r.status === 'failed').length;
+    const failed = [...finalResults.values()].filter(
+      (r) => r.status === 'failed' || r.status === 'timedOut' || r.status === 'interrupted',
+    ).length;
     const skipped = [...finalResults.values()].filter((r) => r.status === 'skipped').length;
     const duration = (fullResult.duration / 1000).toFixed(1);
 
