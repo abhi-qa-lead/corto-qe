@@ -1,9 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
-      "mcp__claude_ai_Atlassian__getConfluenceSpaces",
-      "mcp__claude_ai_Atlassian__getVisibleJiraProjects",
       "mcp__playwright__browser_navigate",
       "mcp__playwright__browser_snapshot",
       "mcp__playwright__browser_fill_form",
@@ -16,7 +13,14 @@
       "WebFetch(domain:devactivity.com)",
       "Bash(curl:*)",
       "Bash(npx playwright:*)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(claude mcp:*)",
+      "Bash(npm search:*)",
+      "Bash(npm info:*)",
+      "Bash(mv src/api/clients/request.client.ts src/helpers/api.client.ts)",
+      "Bash(mv src/reporters/spec.reporter.ts src/helpers/spec.reporter.ts)",
+      "Bash(rmdir src/api/clients)",
+      "Bash(rmdir src/reporters)"
     ]
   }
 }

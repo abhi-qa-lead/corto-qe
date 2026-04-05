@@ -11,6 +11,7 @@
     "paths": {
       "@ui/*": ["src/ui/*"],
       "@api/*": ["src/api/*"],
+      "@helpers/*": ["src/helpers/*"],
       "@fixtures": ["src/ui/fixtures"]
     }
   }

@@ -8,18 +8,18 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI
     ? [
-        ['list'],
+        ['./src/helpers/spec.reporter.ts'],
         ['html'],
         [
           '@estruyf/github-actions-reporter',
           <GitHubActionOptions>{
-            title: 'Corto QE UI Test Results',
+            title: 'Corto QE Test Results',
             useDetails: true,
             showError: true,
           },
         ],
       ]
-    : [['list'], ['html']],
+    : [['./src/helpers/spec.reporter.ts'], ['html']],
   use: {
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
