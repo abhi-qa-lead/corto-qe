@@ -7,7 +7,7 @@ import {
   PARTIAL_UPDATE_REQUEST_PAYLOAD,
 } from '@api/data/booking.data';
 
-test.describe('COR-25: E2E Flow - Restful Booker API CRUD Test', () => {
+test.describe('COR-24: E2E Flow - Restful Booker API CRUD Test', () => {
   test.describe.configure({ mode: 'serial' });
 
   test.describe('should complete the full booking lifecycle', () => {
@@ -36,7 +36,7 @@ test.describe('COR-25: E2E Flow - Restful Booker API CRUD Test', () => {
       bookingId = body.bookingid;
     });
 
-    test('GET - GetBooking - Retrieve the above creted booking by bookindId', async ({
+    test('GET - GetBooking - Retrieve the above created booking by bookingId', async ({
       request,
     }) => {
       const api = new ApiClient(request, token);
