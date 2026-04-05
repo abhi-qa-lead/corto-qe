@@ -9,7 +9,7 @@ test.describe('COR-23: POST /auth - Create Token', () => {
     api = new ApiClient(request);
   });
 
-  test('should return a token with valid credentials', async () => {
+  test('positive - should return a token with valid credentials', async () => {
     const response = await api.send('POST', '/auth', VALID_CREDENTIALS);
 
     expect(response.status(), 'Auth should return 200').toBe(200);
@@ -21,7 +21,7 @@ test.describe('COR-23: POST /auth - Create Token', () => {
   });
 
   for (const [index, credentials] of INVALID_CREDENTIALS.entries()) {
-    test(`should reject invalid credentials : ${JSON.stringify(credentials)}`, async () => {
+    test(`negative - should reject invalid credentials : ${JSON.stringify(credentials)}`, async () => {
       const response = await api.send('POST', '/auth', credentials);
 
       expect(response.status(), 'Auth should return 200 even for bad credentials').toBe(200);
