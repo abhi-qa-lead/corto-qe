@@ -8,6 +8,7 @@
     "test-ui": "playwright test --project=ui-tests",
     "test-api": "playwright test --project=api-tests",
     "test-open": "playwright test --ui",
+    "test-negative": "playwright test --grep @negative",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "prepare": "husky"
   },
