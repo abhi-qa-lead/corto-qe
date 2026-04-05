@@ -32,7 +32,10 @@ test.describe('COR-4: Search filters books by author name', () => {
     const titles = await bookStorePage.getVisibleBookTitles();
     const expectedTitles = getBooksMatchingSearch(partialName);
 
-    expect(titles.length, `Partial author name "${partialName}" should return results`).toBeGreaterThan(0);
+    expect(
+      titles.length,
+      `Partial author name "${partialName}" should return results`,
+    ).toBeGreaterThan(0);
     expect(titles.sort(), `All books matching "${partialName}" should appear`).toEqual(
       expectedTitles.sort(),
     );
