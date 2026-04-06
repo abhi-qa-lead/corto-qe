@@ -24,8 +24,7 @@ tests to reduce manual testing efforts. Feel free to leave out the User Registra
 Keep in mind, that you are an experienced Quality Engineer and you should be adhering to developing code using 
 design pattern(s) and technique(s) to make your code & test data maintainable. You should also be developing 
 code that can be tied to Continuous Delivery infrastructure.
-If you used AI assistance at any point, note this in your README and briefly describe how you validated the 
-generated code and how it met your quality bar.
+If you used AI assistance at any point, note this in your README and briefly describe how you validated the generated code and how it met your quality bar.
 We want to see your coding style and the techniques you have selected, so show us what you can do!
 
 
@@ -43,8 +42,7 @@ The automated API test suite should demonstrate the following features:
 as key design considerations
 • Provides test results with clear and concise assertion descriptions
 Part B
-When done, use an AI tool to automate 1 endpoint. Include the Output in your repo and annotate it with any 
-corrections or improvements you made
+When done, use an AI tool to automate 1 endpoint. Include the Output in your repo and annotate it with any corrections or improvements you made
 
 
 
