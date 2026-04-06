@@ -72,16 +72,19 @@ jobs:
 
       - name: Upload results to TestDino
         if: always()
+        continue-on-error: true
         env:
           TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
           TESTDINO_RUN_TAGS: ui,${{ github.event_name }}
-        run: pnpm exec tdpw upload ./playwright-report
+        run: pnpm run testdino-upload
 
   api-tests:
     name: API Tests
     if: github.event_name != 'workflow_dispatch' || inputs.project == 'all' || inputs.project == 'api-tests'
     timeout-minutes: 15
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -106,7 +109,8 @@ jobs:
 
       - name: Upload results to TestDino
         if: always()
+        continue-on-error: true
         env:
           TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
           TESTDINO_RUN_TAGS: api,${{ github.event_name }}
-        run: pnpm exec tdpw upload ./playwright-report
+        run: pnpm run testdino-upload
