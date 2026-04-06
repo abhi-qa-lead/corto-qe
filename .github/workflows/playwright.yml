@@ -71,10 +71,11 @@ jobs:
           retention-days: 14
 
       - name: Upload results to TestDino
-        if: ${{ !cancelled() }}
+        if: always()
         env:
           TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
-        run: pnpm exec tdpw upload ./playwright-report --token=$TESTDINO_TOKEN
+          TESTDINO_RUN_TAGS: ui,${{ github.event_name }}
+        run: pnpm exec tdpw upload ./playwright-report
 
   api-tests:
     name: API Tests
@@ -104,7 +105,8 @@ jobs:
           retention-days: 14
 
       - name: Upload results to TestDino
-        if: ${{ !cancelled() }}
+        if: always()
         env:
           TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
-        run: pnpm exec tdpw upload ./playwright-report --token=$TESTDINO_TOKEN
+          TESTDINO_RUN_TAGS: api,${{ github.event_name }}
+        run: pnpm exec tdpw upload ./playwright-report
