@@ -155,7 +155,7 @@ GitHub Actions workflow at `.github/workflows/playwright.yml` runs UI and API su
 - **Version-pinned cache keys** - keys include the exact Playwright version, so upgrading Playwright auto-invalidates the cache and pulls fresh binaries. No stale-cache debugging, no manual busting.
 - **Conditional install** - full browser install only runs on a cache miss; cache hits install just the lightweight OS deps.
 
-## Getting caching right is the difference between a CI pipeline that helps you ship and one that you dread waiting on.
+**Getting caching right is the difference between a CI pipeline that helps you ship and one that you dread waiting on.**
 
 ## Project management & process
 
