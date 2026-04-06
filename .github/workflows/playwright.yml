@@ -3,6 +3,8 @@ name: Playwright Tests
 on:
   push:
     branches: [main]
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       project:
@@ -18,6 +20,12 @@ on:
         type: string
         required: false
         default: ""
+
+# Allow only one concurrent deployment to GitHub Pages.
+# Don't cancel in-progress runs — we want every published deployment to finish cleanly.
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 # Allow only one concurrent deployment to GitHub Pages.
 # Don't cancel in-progress runs — we want every published deployment to finish cleanly.
@@ -104,8 +112,6 @@ jobs:
   publish-pages:
     name: Publish Reports to GitHub Pages
     needs: [ui-tests, api-tests]
-    # Run even if one or both test jobs failed — we still want to publish whatever ran.
-    # Skip only if everything was cancelled or both jobs were skipped (e.g. workflow_dispatch with no projects matched).
     if: |
       always() &&
       (needs.ui-tests.result == 'success' || needs.ui-tests.result == 'failure' ||
@@ -134,183 +140,10 @@ jobs:
           path: site/api
 
       - name: Generate landing page
-        run: |
-          mkdir -p site
-          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
-          COMMIT_SHORT=$(echo "${{ github.sha }}" | cut -c1-7)
-          COMMIT_URL="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
-
-          UI_CARD=""
-          API_CARD=""
-
-          if [ -f site/ui/index.html ]; then
-            UI_STATUS_LABEL="${{ needs.ui-tests.result == 'success' && 'passed' || 'failed' }}"
-            UI_CARD="<a class=\"card card--${UI_STATUS_LABEL}\" href=\"./ui/\">
-              <div class=\"card-header\">
-                <h2>UI Tests</h2>
-                <span class=\"badge badge--${UI_STATUS_LABEL}\">${UI_STATUS_LABEL}</span>
-              </div>
-              <p class=\"card-target\">DemoQA Book Store</p>
-              <p class=\"card-desc\">Page Object Model · custom fixtures · risk-prioritized scenarios</p>
-              <span class=\"card-link\">View report →</span>
-            </a>"
-          fi
-
-          if [ -f site/api/index.html ]; then
-            API_STATUS_LABEL="${{ needs.api-tests.result == 'success' && 'passed' || 'failed' }}"
-            API_CARD="<a class=\"card card--${API_STATUS_LABEL}\" href=\"./api/\">
-              <div class=\"card-header\">
-                <h2>API Tests</h2>
-                <span class=\"badge badge--${API_STATUS_LABEL}\">${API_STATUS_LABEL}</span>
-              </div>
-              <p class=\"card-target\">Restful Booker</p>
-              <p class=\"card-desc\">CRUD lifecycle · data-driven negatives · auth flow</p>
-              <span class=\"card-link\">View report →</span>
-            </a>"
-          fi
-
-          cat > site/index.html <<HTML
-          <!doctype html>
-          <html lang="en">
-          <head>
-            <meta charset="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <title>corto-qe · Test Reports</title>
-            <style>
-              :root {
-                --bg: #0f1115;
-                --surface: #161a22;
-                --surface-2: #1d2230;
-                --border: #2a3142;
-                --text: #e6e9ef;
-                --text-dim: #9aa3b2;
-                --accent: #6ea8ff;
-                --pass: #4ade80;
-                --fail: #f87171;
-              }
-              * { box-sizing: border-box; }
-              body {
-                margin: 0;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-                background: var(--bg);
-                color: var(--text);
-                line-height: 1.5;
-                min-height: 100vh;
-              }
-              .container {
-                max-width: 880px;
-                margin: 0 auto;
-                padding: 4rem 1.5rem 3rem;
-              }
-              header { margin-bottom: 2.5rem; }
-              h1 {
-                margin: 0 0 0.5rem;
-                font-size: 2rem;
-                font-weight: 600;
-                letter-spacing: -0.02em;
-              }
-              .subtitle {
-                margin: 0;
-                color: var(--text-dim);
-                font-size: 1rem;
-              }
-              .meta {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1.25rem;
-                margin-top: 1.25rem;
-                font-size: 0.875rem;
-                color: var(--text-dim);
-              }
-              .meta a { color: var(--accent); text-decoration: none; }
-              .meta a:hover { text-decoration: underline; }
-              .cards {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-                gap: 1.25rem;
-              }
-              .card {
-                display: block;
-                padding: 1.5rem;
-                background: var(--surface);
-                border: 1px solid var(--border);
-                border-radius: 12px;
-                text-decoration: none;
-                color: inherit;
-                transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-              }
-              .card:hover {
-                transform: translateY(-2px);
-                background: var(--surface-2);
-                border-color: var(--accent);
-              }
-              .card-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 0.5rem;
-              }
-              .card h2 {
-                margin: 0;
-                font-size: 1.25rem;
-                font-weight: 600;
-              }
-              .badge {
-                font-size: 0.75rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                padding: 0.25rem 0.625rem;
-                border-radius: 999px;
-              }
-              .badge--passed { background: rgba(74, 222, 128, 0.15); color: var(--pass); }
-              .badge--failed { background: rgba(248, 113, 113, 0.15); color: var(--fail); }
-              .card-target {
-                margin: 0 0 0.25rem;
-                font-size: 0.9375rem;
-                color: var(--text);
-              }
-              .card-desc {
-                margin: 0 0 1rem;
-                font-size: 0.875rem;
-                color: var(--text-dim);
-              }
-              .card-link {
-                font-size: 0.875rem;
-                color: var(--accent);
-                font-weight: 500;
-              }
-              footer {
-                margin-top: 3rem;
-                font-size: 0.8125rem;
-                color: var(--text-dim);
-                text-align: center;
-              }
-              footer a { color: var(--text-dim); }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <header>
-                <h1>corto-qe · Test Reports</h1>
-                <p class="subtitle">Playwright test automation for the DemoQA Book Store and Restful Booker APIs.</p>
-                <div class="meta">
-                  <span>Last updated: <strong>${TIMESTAMP}</strong></span>
-                  <span>Commit: <a href="${COMMIT_URL}"><code>${COMMIT_SHORT}</code></a></span>
-                  <a href="${{ github.server_url }}/${{ github.repository }}">View repository →</a>
-                </div>
-              </header>
-              <div class="cards">
-                ${UI_CARD}
-                ${API_CARD}
-              </div>
-              <footer>
-                Generated by GitHub Actions · <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">workflow run</a>
-              </footer>
-            </div>
-          </body>
-          </html>
-          HTML
+        env:
+          UI_RESULT: ${{ needs.ui-tests.result }}
+          API_RESULT: ${{ needs.api-tests.result }}
+        run: bash .github/scripts/generate-landing-page.sh
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
