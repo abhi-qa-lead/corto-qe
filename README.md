@@ -76,7 +76,7 @@ pnpm exec playwright show-report
 
 ## Project structure
 
-```
+```text
 tests/
 ├── ui/                              # UI test specs
 │   ├── bookStoreTable.spec.ts
@@ -123,19 +123,26 @@ UI specs consume page objects via custom Playwright fixtures (`src/ui/fixtures/i
 
 ### API client abstraction
 
-`src/helpers/api.client.ts` wraps Playwright's `request` context, centralizes base URL and token handling, and exposes typed methods per endpoint. Specs never construct raw HTTP calls - they call `apiClient.createBooking(...)`.
+`src/helpers/api.client.ts` is a thin wrapper around Playwright's `APIRequestContext`. It centralizes auth token handling (injecting the `Cookie: token=...` header when a token is present) and exposes a single generic `send(method, path, data)` method that specs use for all HTTP calls. This keeps specs free of repetitive header boilerplate while staying deliberately minimal - the next iteration (see [Further enhancements](#further-enhancements-beyond-mvp)) would evolve this into typed per-endpoint methods like `apiClient.createBooking(...)` for stronger compile-time guarantees.
 
 ### Data flow between endpoints
 
 The CRUD happy-path spec (`e2e-flow-CRUD-happy-path.spec.ts`) chains `POST → GET → PUT → PATCH → DELETE → GET(404)` on the same booking, passing IDs and field values between steps. This validates end-to-end data integrity, not just individual endpoint correctness.
 
-### Custom reporter
-
-`src/helpers/spec.reporter.ts` is a hand-written Playwright reporter. Default reporters either interleave parallel output or buffer until the end. This one buffers **per file** and flushes when a file completes - real-time feedback without cross-file interleaving. Supports both Mocha (`✓`/`✗`) and Jest (`PASS`/`FAIL`) output styles via config.
 
 ### Tag-based test selection
 
 Negative tests are tagged `@negative` so they can be run in isolation (`pnpm test-negative`) - useful for quickly exercising validation logic without running the full suite.
+
+### Code quality gates (Prettier + Husky + lint-staged)
+
+Consistent formatting is enforced automatically - not left to individual discipline. The project uses a three-layer setup that catches style drift before it ever reaches the remote:
+
+- **Prettier** is the single source of truth for formatting, configured via `.prettierrc` (semi, single quotes, trailing commas, 100-char width, LF line endings). No debates, no opinions - the formatter decides.
+- **Husky** installs Git hooks on `pnpm install` via the `prepare` script, so every contributor gets the hooks automatically without manual setup.
+- **lint-staged** runs Prettier in `--check` mode against only the staged `.ts` files on every commit, triggered by the Husky `pre-commit` hook. If a file isn't formatted, the commit is rejected.
+
+The effect: it is impossible to commit unformatted code to this repo. The main branch stays clean without anyone having to think about it, and code reviews focus on logic instead of whitespace. This is a small investment that pays compounding dividends as a team grows.
 
 ### CI/CD
 
@@ -143,13 +150,12 @@ GitHub Actions workflow at `.github/workflows/playwright.yml` runs UI and API su
 
 **Aggressive caching** is what makes the pipeline fast:
 
-- **pnpm store cache** — dependency installs skip re-downloading packages on warm runs.
-- **Playwright browser binary cache** — the ~200MB Chromium download is skipped entirely on cache hits, shaving 1–2 minutes off every job.
-- **Version-pinned cache keys** — keys include the exact Playwright version, so upgrading Playwright auto-invalidates the cache and pulls fresh binaries. No stale-cache debugging, no manual busting.
-- **Conditional install** — full browser install only runs on a cache miss; cache hits install just the lightweight OS deps.
+- **pnpm store cache** - dependency installs skip re-downloading packages on warm runs.
+- **Playwright browser binary cache** - the ~200MB Chromium download is skipped entirely on cache hits, shaving 1–2 minutes off every job.
+- **Version-pinned cache keys** - keys include the exact Playwright version, so upgrading Playwright auto-invalidates the cache and pulls fresh binaries. No stale-cache debugging, no manual busting.
+- **Conditional install** - full browser install only runs on a cache miss; cache hits install just the lightweight OS deps.
 
-Getting caching right is the difference between a CI pipeline that helps you ship and one that you dread waiting on.
----
+## Getting caching right is the difference between a CI pipeline that helps you ship and one that you dread waiting on.
 
 ## Project management & process
 
@@ -212,13 +218,13 @@ This gave full traceability: every commit, PR, and test in the codebase can be t
 
 The automated test suite surfaced the following genuine defects in the Restful Booker API during test development. Each was filed as a Jira bug ticket with steps to reproduce, expected vs. actual behavior, and impact analysis.
 
-| # | Endpoint | Defect | Expected | Actual | Impact | Ticket |
-|---|---|---|---|---|---|---|
-| 1 | `POST /booking` | Numeric values in `firstname` / `lastname` crash the server | `400 Bad Request` | `500 Internal Server Error` | Missing input validation; potential stack-trace leakage on unhandled exception | [COR-29](https://abhiqalead.atlassian.net/browse/COR-29) |
-| 2 | `POST /booking` | Invalid date formats are accepted and persisted | `400 Bad Request` | `200 OK` (booking created with corrupt dates) | Corrupt data in storage; downstream consumers (reports, calendars) will break | [COR-30](https://abhiqalead.atlassian.net/browse/COR-30) |
-| 3 | `POST /booking` | Non-numeric `totalprice` is accepted and persisted | `400 Bad Request` | `200 OK` (booking created with invalid price) | Risk of incorrect billing and reporting errors downstream | [COR-31](https://abhiqalead.atlassian.net/browse/COR-31) |
+| #   | Endpoint        | Defect                                                      | Expected          | Actual                                        | Impact                                                                         | Ticket                                                   |
+| --- | --------------- | ----------------------------------------------------------- | ----------------- | --------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| 1   | `POST /booking` | Numeric values in `firstname` / `lastname` crash the server | `400 Bad Request` | `500 Internal Server Error`                   | Missing input validation; potential stack-trace leakage on unhandled exception | [COR-29](https://abhiqalead.atlassian.net/browse/COR-29) |
+| 2   | `POST /booking` | Invalid date formats are accepted and persisted             | `400 Bad Request` | `200 OK` (booking created with corrupt dates) | Corrupt data in storage; downstream consumers (reports, calendars) will break  | [COR-30](https://abhiqalead.atlassian.net/browse/COR-30) |
+| 3   | `POST /booking` | Non-numeric `totalprice` is accepted and persisted          | `400 Bad Request` | `200 OK` (booking created with invalid price) | Risk of incorrect billing and reporting errors downstream                      | [COR-31](https://abhiqalead.atlassian.net/browse/COR-31) |
 
-These bugs were not seeded or contrived — they were discovered organically while writing the negative test scenarios driven by the Risk Matrix. This demonstrates the real value of RBT-driven automation: the process itself surfaces defects that pure happy-path coverage would never find.
+These bugs were not seeded or contrived - they were discovered organically while writing the negative test scenarios driven by the Risk Matrix. This demonstrates the real value of RBT-driven automation: the process itself surfaces defects that pure happy-path coverage would never find.
 
 ---
 
@@ -245,19 +251,23 @@ The architectural decisions (POM structure, fixture design, API client abstracti
 
 The current suite is scoped to deliver a solid, demonstrable MVP within the interview window. The following improvements are tracked as next steps and would be the natural progression if this project were taken forward as a production-grade effort:
 
+### API Framework hardening (optional)
+
+- **Typed API client methods per endpoint** - evolve the current generic `send()` wrapper into explicit methods like `createBooking()`, `getBooking()`, `updateBooking()`, etc., with typed request/response models. This gives compile-time guarantees, better IDE autocomplete, and removes the need for specs to hand-construct paths and method strings.
+
 ### Test execution & selection
 
-- **RPN-based test tagging** — tag every test with its risk tier (`@high`, `@medium`, `@low`) so that CI can run the high-risk subset on every PR and the full suite on nightly/scheduled runs. Usage: `pnpm exec playwright test --grep @high`.
-- **Scheduled runs** — add a cron trigger to GitHub Actions to run the full suite on a nightly basis as a regression safety net, independent of developer activity.
-- **Manual dispatch** — enable `workflow_dispatch` so the suite can be triggered on-demand from the GitHub Actions UI, optionally with inputs (environment, tag filter, project selector).
+- **RPN-based test tagging** - tag every test with its risk tier (`@high`, `@medium`, `@low`) so that CI can run the high-risk subset on every PR and the full suite on nightly/scheduled runs. Usage: `pnpm exec playwright test --grep @high`.
+- **Scheduled runs** - add a cron trigger to GitHub Actions to run the full suite on a nightly basis as a regression safety net, independent of developer activity.
+- **Manual dispatch** - enable `workflow_dispatch` so the suite can be triggered on-demand from the GitHub Actions UI, optionally with inputs (environment, tag filter, project selector).
 
 ### UI coverage expansion
 
-- **Cross-browser testing** — add Firefox and WebKit projects to the Playwright config to catch browser-specific regressions beyond Chromium.
-- **Responsive / form-factor testing** — run the UI suite against mobile and tablet viewport emulation profiles to validate responsive behavior.
-- **Visual regression testing** — introduce snapshot-based visual assertions on critical UI flows (book list rendering, detail pages) using Playwright's built-in `toHaveScreenshot()`.
+- **Cross-browser testing** - add Firefox and WebKit projects to the Playwright config to catch browser-specific regressions beyond Chromium.
+- **Responsive / form-factor testing** - run the UI suite against mobile and tablet viewport emulation profiles to validate responsive behavior.
+- **Visual regression testing** - introduce snapshot-based visual assertions on critical UI flows (book list rendering, detail pages) using Playwright's built-in `toHaveScreenshot()`.
 
 ### Observability & feedback
 
-- **Slack integration** — wire test failures from CI directly into a Slack channel with a summary and a link to the failing report. Closes the loop on "tests ran but nobody noticed they failed."
-- **Parallel execution tuning** — profile and optimize worker allocation per project to minimize wall-clock time on CI, especially once the suite grows.
+- **Slack integration** - wire test failures from CI directly into a Slack channel with a summary and a link to the failing report. Closes the loop on "tests ran but nobody noticed they failed."
+- **Parallel execution tuning** - profile and optimize worker allocation per project to minimize wall-clock time on CI, especially once the suite grows.
