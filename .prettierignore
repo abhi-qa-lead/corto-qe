@@ -1,3 +1,4 @@
+# Dependencies and build artifacts
 node_modules
 package-lock.json
 pnpm-lock.yaml
@@ -5,3 +6,22 @@ dist
 playwright-report
 test-results
 test-snapshots
+
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+.playwright-mcp/
+
+# Local files
+.claude/*
+.cursorrules
+.mcp.json
+.windsurfrules
+AGENTS.md
+CLAUDE.md
+GEMINI.md
