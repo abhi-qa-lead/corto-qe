@@ -10,7 +10,7 @@ The test automation project is built using Playwright (https://playwright.dev/) 
 
 Both suites live in a single repository and run via a shared Playwright test runner.
 
-> **Note:** This automated suite uncovered **3 real defects** in the Restful Booker API during test development. Each has been filed as a Jira bug with reproduction steps, expected vs. actual behavior, and impact analysis. See [**Bugs found**](#bugs-found) below.
+> ⚠️ **Note:** This automated suite uncovered **3 real defects** in the Restful Booker API during test development. Each has been filed as a Jira bug with reproduction steps, expected vs. actual behavior, and impact analysis. See [**Bugs found**](#bugs-found) below.
 
 ---
 
@@ -244,6 +244,10 @@ This project was built with the following workflow:
 - In several cases, the AI produced hallucinated APIs, missed edge cases, or wrote logically incorrect flows - these required manual correction and re-implementation on my part.
 
 The architectural decisions (POM structure, fixture design, API client abstraction, data-driven approach, custom reporter, tagging strategy, risk-based prioritization) are mine. The AI was a productivity multiplier on top of those decisions, not the source of them.
+
+### On Task 2 Part B
+
+Rather than fabricate a contrived "bad AI → manual fix" exercise, I'd point to the entire repo as the deliverable — every test was AI-assisted, reviewed, corrected, and validated. Corrections were made on the fly before committing, so there are no before/after snapshots, but I can walk through the recurring AI failure patterns (hallucinated APIs, shallow negative coverage, inlined test data, weak assertion messages) live in the interview.
 
 ---
 
