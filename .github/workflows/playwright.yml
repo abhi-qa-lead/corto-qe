@@ -3,8 +3,8 @@ name: Playwright Tests
 on:
   # push:
   #   branches: [main]
-  # pull_request:
-  #   branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       project:
@@ -70,6 +70,12 @@ jobs:
           path: playwright-report/
           retention-days: 14
 
+      - name: Upload results to TestDino
+        if: ${{ !cancelled() }}
+        env:
+          TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
+        run: pnpm exec tdpw upload ./playwright-report --token=$TESTDINO_TOKEN
+
   api-tests:
     name: API Tests
     if: github.event_name != 'workflow_dispatch' || inputs.project == 'all' || inputs.project == 'api-tests'
@@ -96,3 +102,9 @@ jobs:
           name: api-test-report
           path: playwright-report/
           retention-days: 14
+
+      - name: Upload results to TestDino
+        if: ${{ !cancelled() }}
+        env:
+          TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
+        run: pnpm exec tdpw upload ./playwright-report --token=$TESTDINO_TOKEN
