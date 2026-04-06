@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI
     ? [
-        ['./src/helpers/spec.reporter.ts'],
+        ['./src/helpers/spec.reporter.ts', { style: 'mocha' }],
         ['html'],
         [
           '@estruyf/github-actions-reporter',
@@ -19,7 +19,7 @@ export default defineConfig({
           },
         ],
       ]
-    : [['./src/helpers/spec.reporter.ts'], ['html']],
+    : [['./src/helpers/spec.reporter.ts', { style: 'mocha' }], ['html']],
   use: {
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',

@@ -7,3 +7,12 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 .playwright-mcp/
+
+.claude/*
+.cursorrules
+.mcp.json
+.windsurfrules
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.claude/settings.local.json

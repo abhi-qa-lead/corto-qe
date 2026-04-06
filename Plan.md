@@ -249,3 +249,7 @@ Further Enhancements (beyond MVP)
 - Add option to trigger tests on a schedule
 - Add option to trigger tests on demand from GitHub Actions UI
 - Add Slack integration for test failure notifications
+- Multibrower Testing (chromium, firefox, webkit) for UI suite
+- Parallel test execution for faster feedback
+- Visual regression testing for critical UI flows
+- Various form-factors (mobile viewport emulation) for UI tests
