@@ -9,7 +9,8 @@ export default defineConfig({
   reporter: process.env.CI
     ? [
         ['./src/helpers/spec.reporter.ts', { style: 'mocha' }],
-        ['html'],
+        ['json', { outputFile: './playwright-report/report.json' }],
+        ['html', { outputFolder: './playwright-report/html', open: 'never' }],
         [
           '@estruyf/github-actions-reporter',
           <GitHubActionOptions>{
@@ -19,7 +20,11 @@ export default defineConfig({
           },
         ],
       ]
-    : [['./src/helpers/spec.reporter.ts', { style: 'mocha' }], ['html']],
+    : [
+        ['./src/helpers/spec.reporter.ts', { style: 'mocha' }],
+        ['json', { outputFile: './playwright-report/report.json' }],
+        ['html', { outputFolder: './playwright-report/html', open: 'never' }],
+      ],
   use: {
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
