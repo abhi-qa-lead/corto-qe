@@ -161,7 +161,7 @@ The effect: it is impossible to commit unformatted code to this repo. The main b
 
 ### CI/CD
 
-GitHub Actions workflow at `.github/workflows/playwright.yml` runs the UI and API suites as parallel jobs, then publishes results to GitHub Pages. Triggered on push to `main` and via manual `workflow_dispatch` (with optional project and `--grep` inputs).
+GitHub Actions workflow at `.github/workflows/playwright.yml` runs the UI and API suites as parallel jobs, then publishes results to GitHub Pages. Triggered on push to `main`, on every pull request, and via manual `workflow_dispatch` (with optional project and `--grep` inputs). **CodeQL** is also enabled at the repo level for automated security scanning on every PR.
 
 **Aggressive caching** is what makes the pipeline fast:
 
@@ -192,19 +192,11 @@ Rather than attempting blanket coverage of every feature, I applied **Risk-Based
 4. **RPN calculation** - `RPN(Risk Priority Number) = Likelihood × Impact`.
 5. **Prioritization** - Scenarios were ranked by RPN. High-RPN items were automated first; low-RPN items were deferred or left for manual testing.
 
-Important Links:
-
-- **Confluence Risk Matrix:** https://abhiqalead.atlassian.net/wiki/x/AYAV
-- **Jira Product Discovery:** https://abhiqalead.atlassian.net/jira/polaris/projects/MDP/ideas/view/12108020
-- **RPN scoring template:** https://abhiqalead.atlassian.net/jira/polaris/projects/MDP/ideas/view/12108021
+> The Confluence and Jira workspaces used for planning, scoring, and ticketing are on a private Atlassian instance. Local copies of all relevant artifacts — Risk Matrix (Markdown + Confluence PDF), Frontend Impact Assessment, RBT framework, and Test Strategy — live in [`docs/`](docs/) for reviewers without Atlassian access. The walkthrough video also demos the live Atlassian workspace on screen.
 
 ### Ticketing & sprint flow
 
-Every identified scenario became a **Jira ticket** in the backlog, tagged with its RPN score. Tickets were then pulled into the active sprint in RPN order - highest risk first. This ensured that if time ran out, the most critical coverage was already in place.
-
-- **Jira Sprint Board:** https://abhiqalead.atlassian.net/jira/software/projects/COR/boards/1
-- **Jira Backlog:** https://abhiqalead.atlassian.net/jira/software/projects/COR/boards/1/backlog
-- **Ticket prefix:** `COR-XX` (COR for Corto, XX for ticket number)
+Every identified scenario became a **Jira ticket** in the backlog, tagged with its RPN score. Tickets were then pulled into the active sprint in RPN order - highest risk first. This ensured that if time ran out, the most critical coverage was already in place. Ticket prefix: `COR-XX` (COR for Corto).
 
 ### Development workflow
 
@@ -231,6 +223,7 @@ This gave full traceability: every commit, PR, and test in the codebase can be t
 | **GitHub Actions** | CI pipeline - UI and API test suites as parallel jobs |
 | **GitHub Pages**   | Public hosting of the live test reports dashboard     |
 | **CodeRabbit**     | Automated PR code review (GitHub plugin)              |
+| **CodeQL**         | Automated security scanning on every PR               |
 
 ---
 
@@ -240,9 +233,9 @@ The automated test suite surfaced the following genuine defects in the Restful B
 
 | #   | Endpoint        | Defect                                                      | Expected          | Actual                                        | Impact                                                                         | Ticket                                                   |
 | --- | --------------- | ----------------------------------------------------------- | ----------------- | --------------------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------- |
-| 1   | `POST /booking` | Numeric values in `firstname` / `lastname` crash the server | `400 Bad Request` | `500 Internal Server Error`                   | Missing input validation; potential stack-trace leakage on unhandled exception | [COR-29](https://abhiqalead.atlassian.net/browse/COR-29) |
-| 2   | `POST /booking` | Invalid date formats are accepted and persisted             | `400 Bad Request` | `200 OK` (booking created with corrupt dates) | Corrupt data in storage; downstream consumers (reports, calendars) will break  | [COR-30](https://abhiqalead.atlassian.net/browse/COR-30) |
-| 3   | `POST /booking` | Non-numeric `totalprice` is accepted and persisted          | `400 Bad Request` | `200 OK` (booking created with invalid price) | Risk of incorrect billing and reporting errors downstream                      | [COR-31](https://abhiqalead.atlassian.net/browse/COR-31) |
+| 1   | `POST /booking` | Numeric values in `firstname` / `lastname` crash the server | `400 Bad Request` | `500 Internal Server Error`                   | Missing input validation; potential stack-trace leakage on unhandled exception | `COR-29` |
+| 2   | `POST /booking` | Invalid date formats are accepted and persisted             | `400 Bad Request` | `200 OK` (booking created with corrupt dates) | Corrupt data in storage; downstream consumers (reports, calendars) will break  | `COR-30` |
+| 3   | `POST /booking` | Non-numeric `totalprice` is accepted and persisted          | `400 Bad Request` | `200 OK` (booking created with invalid price) | Risk of incorrect billing and reporting errors downstream                      | `COR-31` |
 
 These bugs were not seeded or contrived - they were discovered organically while writing the negative test scenarios driven by the Risk Matrix. This demonstrates the real value of RBT-driven automation: the process itself surfaces defects that pure happy-path coverage would never find.
 
@@ -283,7 +276,6 @@ The current suite is scoped to deliver a solid, demonstrable MVP within the inte
 
 - **RPN-based test tagging** - tag every test with its risk tier (`@high`, `@medium`, `@low`) so that CI can run the high-risk subset on every PR and the full suite on nightly/scheduled runs. Usage: `pnpm exec playwright test --grep @high`.
 - **Scheduled runs** - add a cron trigger to GitHub Actions to run the full suite on a nightly basis as a regression safety net, independent of developer activity.
-- **Pull request runs** - currently CI runs only on push to `main` and manual dispatch. Adding `pull_request` to the trigger list would give per-PR feedback, with PR runs uploading artifacts but not republishing the public Pages site.
 
 ### UI coverage expansion
 

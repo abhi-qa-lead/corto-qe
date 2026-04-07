@@ -96,8 +96,25 @@
 
 ---
 
-## Next Steps
+## Bugs uncovered through this matrix
 
-1. Push this Risk Matrix to Confluence once Atlassian auth is resolved
-2. Create Jira Epics and Stories for High RPN scenarios
-3. Begin implementation starting with Task 1 (UI Automation)
+The negative API scenarios driven by the Risk Matrix uncovered **3 real defects** in the Restful Booker API:
+
+| # | Scenario ID | Defect | Ticket |
+|---|---|---|---|
+| 1 | API-012 | `POST /booking` returns `500` instead of `400` for numeric values in string fields | `COR-29` |
+| 2 | API-012 | `POST /booking` accepts invalid date formats (returns `200` instead of `400`) | `COR-30` |
+| 3 | API-012 | `POST /booking` accepts non-numeric `totalprice` (returns `200` instead of `400`) | `COR-31` |
+
+These bugs were not seeded — they surfaced organically because the negative scenarios were prioritized by RPN. This is the value of risk-based negative testing.
+
+---
+
+## Related artifacts in this folder
+
+- **`Risk-Based Testing (RBT) Framework.pdf`** — Confluence export of the RBT methodology page
+- **`Test Strategy – Automated Testing Implementation.pdf`** — Confluence export of the implementation strategy
+- **`FrontEnd - Impact assessment - DemoQA Book Store UI.jpg`** — Frontend Impact Assessment screenshot
+- **`Automation Priority DemoQA Book Store UI  Impact vs Effort.jpg`** — Impact vs. Effort prioritization chart
+
+These are local copies of the same content that lives in private Confluence — included here for reviewers without Atlassian access.
