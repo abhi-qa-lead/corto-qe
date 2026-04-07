@@ -3,6 +3,8 @@ name: Playwright Tests
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       project:
@@ -104,8 +106,12 @@ jobs:
   publish-pages:
     name: Publish Reports to GitHub Pages
     needs: [ui-tests, api-tests]
+    # Only publish on push to main or manual dispatch — never on PR runs.
+    # PR runs already get their own artifacts uploaded; the public Pages site
+    # should only ever reflect the state of `main`.
     if: |
       always() &&
+      github.event_name != 'pull_request' &&
       (needs.ui-tests.result == 'success' || needs.ui-tests.result == 'failure' ||
        needs.api-tests.result == 'success' || needs.api-tests.result == 'failure')
     runs-on: ubuntu-latest
